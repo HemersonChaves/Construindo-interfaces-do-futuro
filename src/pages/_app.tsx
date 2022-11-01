@@ -4,6 +4,7 @@ import { theme } from '../styles/theme';
 import { SiderbarDrawerProvider } from '../contexts/SideBarDrawerContext';
 import { makeServer } from '../services/mirage';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 if (process.env.NODE_ENV === 'development') {
   makeServer();
@@ -19,6 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </SiderbarDrawerProvider>
       </ChakraProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )
 }
