@@ -5,28 +5,37 @@ import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import { useQuery } from "react-query"
+import {
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query'
 
 export default function UserList() {
-    const { data, isLoading, error } = useQuery('users', async () => {
-        const response = await fetch('http://localhost:3000/api/users')
-        const data = await response.json();
-        const users = data.users.map(user => {
-            return {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR',
-                    {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric'   
-                    }
-                ),
-            };
-        })
-        return users;
-    });
+    const queryClient = useQueryClient()
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['users'], queryFn: async () => {
+            const response = await fetch('http://localhost:3000/api/users')
+            const data = await response.json();
+            const users = data.users.map(user => {
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR',
+                        {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                        }
+                    ),
+                };
+            })
+            return users;
+        },
+        staleTime: 1000 * 6,
+    })
+
     const isWideVersion = useBreakpointValue({
         base: false,
         lg: true,
