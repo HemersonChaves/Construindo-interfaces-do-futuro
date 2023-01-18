@@ -1,41 +1,14 @@
 import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Th, Thead, Tr, Text, useBreakpointValue, Spinner } from "@chakra-ui/react";
 import Link from "next/link";
-import { useEffect } from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import {
-    useQuery,
-    useQueryClient,
-} from '@tanstack/react-query'
-import { api } from "../../services/api";
+import { useUsers } from "../../services/hooks/useUsers";
 
 export default function UserList() {
-    const queryClient = useQueryClient()
 
-    const { data, isLoading, isFetching, error } = useQuery({
-        queryKey: ['users'], queryFn: async () => {
-            const { data } = await api.get('users')
-
-            const users = data.users.map(user => {
-                return {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR',
-                        {
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric'
-                        }
-                    ),
-                };
-            })
-            return users;
-        },
-        staleTime: 1000 * 6,
-    })
+    const { data, isLoading, isFetching, error } = useUsers();
 
     const isWideVersion = useBreakpointValue({
         base: false,
@@ -91,7 +64,7 @@ export default function UserList() {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {data.map(user => {
+                                    {data?.map(user => {
                                         return (
                                             <Tr key={user.id}>
                                                 <Td px={['4', '4', '6']} >
